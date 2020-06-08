@@ -16,8 +16,8 @@ test=read.csv(file="test.csv")
 #viewing the dataset
 View(test)
 train=read.csv(file="train.csv")
-View(train)
-
+View(train
+     )
 #create a list of 80% of the rows of the original dataset
 #we can use for training
 #we use set.seed() to obtain the same split every time
@@ -601,3 +601,34 @@ summary(predict_test3)
 
 #we can clearly see that model2 gives the most accurate predictions; it is clostest to the predictions made by the model using the original training set.
 #model2 uses transformed4 set to train the RF model. i.e  the set we got applying BoxCox after removing outliers
+
+#other ML Algos with transformed4
+#a)Linear Algorithms
+#Linear Discrimant Analysis(LDA)
+set.seed(200)
+fit.lda1<-train(Choice~.,data=transformed4,method="lda",metric=metric, trControl=control)
+
+#b)Nonlinear Algorithms
+#Classification and Regression Trees(Cart)
+set.seed(200)
+fit.cart1<-train(Choice~.,data=transformed4,method="rpart",metric=metric, trControl=control)
+
+#k-Nearest Neighbors(kNN)
+set.seed(200)
+fit.knn1<-train(Choice~.,data=transformed4,method="knn",metric=metric, trControl=control)
+
+#c) Advanced algorithms
+#Support Vector Machines(SVM) with a linear kernel
+set.seed(200)
+fit.svm1<-train(Choice~.,data=transformed4,method="svmRadial",metric=metric, trControl=control)
+
+#Random Forest
+set.seed(200)
+fit.rff<-train(Choice~.,data=transformed4,method="rf",metric=metric, trControl=control)
+
+#summarize accuracy of models
+results1<-resamples(list(lda=fit.lda1, cart=fit.cart1, knn=fit.knn1, svm=fit.svm1,rff=fit.rff))
+summary(results1)
+
+#We can also create a plot of the model evaluation results and compare the spread and the mean accuracy of each model. There is a population of accuracy measures for each algorithm because each algorithm was evaluated 10 times (10 fold cross validation).
+dotplot(results1)
